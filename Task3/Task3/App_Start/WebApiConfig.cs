@@ -25,6 +25,8 @@ namespace Task3
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            config.Filters.Add(new Task3.Filters.RequireHttpsAttribute());
         }
     }
 }
