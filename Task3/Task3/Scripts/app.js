@@ -1,4 +1,4 @@
-﻿﻿function ViewModel() {
+﻿function ViewModel() {
     var self = this;
 
     var tokenKey = 'accessToken';
@@ -14,6 +14,7 @@
     self.loginPassword = ko.observable();
     self.errors = ko.observableArray([]);
 
+
     function showError(jqXHR) {
 
         self.result(jqXHR.status + ': ' + jqXHR.statusText);
@@ -23,8 +24,7 @@
             if (response.Message) self.errors.push(response.Message);
             if (response.ModelState) {
                 var modelState = response.ModelState;
-                for (var prop in modelState)
-                {
+                for (var prop in modelState) {
                     if (modelState.hasOwnProperty(prop)) {
                         var msgArr = modelState[prop]; // expect array here
                         if (msgArr.length) {
@@ -61,20 +61,28 @@
         self.result('');
         self.errors.removeAll();
 
-        var data = {
-            Email: self.registerEmail(),
-            Password: self.registerPassword(),
-            ConfirmPassword: self.registerPassword2()
-        };
+        grecaptcha.ready(function () {
+            grecaptcha.execute('6LcesxoaAAAAALyQ9n7qpT1LBOYdbhh7cuj-VKKY', { action: 'register' }).then(function (token) {
 
-        $.ajax({
-            type: 'POST',
-            url: '/api/Account/Register',
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify(data)
-        }).done(function (data) {
-            self.result("Done!");
-        }).fail(showError);
+                var data = {
+                    Email: self.registerEmail(),
+                    Password: self.registerPassword(),
+                    ConfirmPassword: self.registerPassword2(),
+                    GoogleCaptchaToken: token
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/Account/Register',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(data)
+                }).done(function (data) {
+                    self.result("Done!");
+                    console.log(data);
+                }).fail(showError);
+
+            });
+        });
     }
 
     self.login = function () {

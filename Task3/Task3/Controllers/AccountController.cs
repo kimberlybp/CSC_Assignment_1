@@ -16,6 +16,7 @@ using Microsoft.Owin.Security.OAuth;
 using Task3.Models;
 using Task3.Providers;
 using Task3.Results;
+using Newtonsoft.Json;
 
 namespace Task3.Controllers
 {
@@ -125,7 +126,7 @@ namespace Task3.Controllers
 
             IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword,
                 model.NewPassword);
-            
+
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
@@ -258,9 +259,9 @@ namespace Task3.Controllers
             if (hasRegistered)
             {
                 Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                
-                 ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
-                    OAuthDefaults.AuthenticationType);
+
+                ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
+                   OAuthDefaults.AuthenticationType);
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
@@ -318,6 +319,36 @@ namespace Task3.Controllers
             return logins;
         }
 
+        private async Task<bool> IsCaptchaValid(string response)
+        {
+            try
+            {
+                var secret = "6LcesxoaAAAAADXtjh8zlGCX9C1jlQmzU5Vhbhj7";
+                using (var client = new HttpClient())
+                {
+                    var values = new Dictionary<string, string>
+                    {
+                        {"secret", secret},
+                        {"response", response},
+                        {"remoteip", HttpContext.Current.Request.UserHostAddress}
+                    };
+
+                    var content = new FormUrlEncodedContent(values);
+                    var verify = await client.PostAsync("https://www.google.com/recaptcha/api/siteverify", content);
+                    var captchaResponseJson = await verify.Content.ReadAsStringAsync();
+                    var captchaResult = JsonConvert.DeserializeObject<CaptchaResponseViewModel>(captchaResponseJson);
+                    return captchaResult.Success
+                           && captchaResult.Action == "register"
+                           && captchaResult.Score > 0.5;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+
         // POST api/Account/Register
         [AllowAnonymous]
         [Route("Register")]
@@ -328,13 +359,22 @@ namespace Task3.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
-
-            IdentityResult result = await UserManager.CreateAsync(user, model.Password);
-
-            if (!result.Succeeded)
+            var isCaptchaValid = await IsCaptchaValid(model.GoogleCaptchaToken);
+            if (isCaptchaValid)
             {
-                return GetErrorResult(result);
+                var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+
+                IdentityResult result = await UserManager.CreateAsync(user, model.Password);
+
+                if (!result.Succeeded)
+                {
+                    return GetErrorResult(result);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("GoogleCaptcha", "The captcha is not valid");
+                return BadRequest(ModelState);
             }
 
             return Ok();
@@ -368,7 +408,7 @@ namespace Task3.Controllers
             result = await UserManager.AddLoginAsync(user.Id, info.Login);
             if (!result.Succeeded)
             {
-                return GetErrorResult(result); 
+                return GetErrorResult(result);
             }
             return Ok();
         }
