@@ -14,6 +14,8 @@
     self.loginPassword = ko.observable();
     self.errors = ko.observableArray([]);
 
+    self.registerButton = ko.observable('Register');
+    self.isRegisterLoading = ko.observable(true);
 
     function showError(jqXHR) {
 
@@ -61,28 +63,81 @@
         self.result('');
         self.errors.removeAll();
 
-        grecaptcha.ready(function () {
-            grecaptcha.execute('6LcesxoaAAAAALyQ9n7qpT1LBOYdbhh7cuj-VKKY', { action: 'register' }).then(function (token) {
+        addValidationMethods();
+        //Validate form before submitting
+        $('#registerForm').validate({
+            rules: {
+                registerEmail: {
+                    required: true,
+                    email: true
+                },
+                registerPassword: {
+                    required: true,
+                    checkLower: true,
+                    checkUpper: true,
+                    checkDigit: true,
+                    checkSpecial: true,
+                    minlength: 6
+                },
+                registerPassword2: {
+                    required: true,
+                    equalTo: '[name="registerPassword"]'
+                }
+            },
+            messages: {
+                registerEmail: {
+                    required: "Please enter an Email Address",
+                    email: "Please enter a valid Email Address"
+                },
+                registerPassword: {
+                    required: "Please enter a Password",
+                    checkLower: "Password must have at least 1 lowercase letter ('a'-'z').",
+                    checkUpper: "Password must have at least 1 uppercase letter ('A'-'Z').",
+                    checkDigit: "Password must have at least 1 digit ('0'-'9').",
+                    checkSpecial: "Password must have at least 1 special character.",
+                    minlength: "Password must have at least 6 characters."
+                },
+                registerPassword2: {
+                    required: "Please confirm your Password",
+                    equalTo: "Passwords do not match."
+                }
+            }
+        })
 
-                var data = {
-                    Email: self.registerEmail(),
-                    Password: self.registerPassword(),
-                    ConfirmPassword: self.registerPassword2(),
-                    GoogleCaptchaToken: token
-                };
+        if ($('#registerForm').valid()) {
+            //Disable and turn Register button to loading with spinner 
+            self.isRegisterLoading(false);
+            self.registerButton('<i class="fa fa-refresh fa-spin"></i>Loading');
 
-                $.ajax({
-                    type: 'POST',
-                    url: '/api/Account/Register',
-                    contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify(data)
-                }).done(function (data) {
-                    self.result("Done!");
-                    console.log(data);
-                }).fail(showError);
 
+            grecaptcha.ready(function () {
+                grecaptcha.execute('6LcesxoaAAAAALyQ9n7qpT1LBOYdbhh7cuj-VKKY', { action: 'register' }).then(function (token) {
+
+                    var data = {
+                        Email: self.registerEmail(),
+                        Password: self.registerPassword(),
+                        ConfirmPassword: self.registerPassword2(),
+                        GoogleCaptchaToken: token
+                    };
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/Account/Register',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify(data)
+                    }).done(function (data) {
+                        self.result("Done!");
+                        self.isRegisterLoading(true);
+                        self.registerButton('Register');
+                    }).fail(function (err) {
+                        showError(err);
+                        self.isRegisterLoading(true);
+                        self.registerButton('Register');
+                    });
+
+                });
             });
-        });
+        }
     }
 
     self.login = function () {
@@ -124,6 +179,22 @@
             sessionStorage.removeItem(tokenKey);
         }).fail(showError);
     }
+
+    function addValidationMethods() {
+        $.validator.addMethod("checkLower", function (value) {
+            return /[a-z]/.test(value);
+        });
+        $.validator.addMethod("checkUpper", function (value) {
+            return /[A-Z]/.test(value);
+        });
+        $.validator.addMethod("checkDigit", function (value) {
+            return /[0-9]/.test(value);
+        });
+        $.validator.addMethod("checkSpecial", function (value) {
+            return /[!@#$%^&*(),.?":{}|<>]/.test(value);
+        });
+    }
+
 }
 
 var app = new ViewModel();

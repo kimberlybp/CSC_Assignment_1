@@ -1,6 +1,8 @@
 @section Scripts {
     @Scripts.Render("~/bundles/app")
     <script src="https://www.google.com/recaptcha/api.js?render=6LcesxoaAAAAALyQ9n7qpT1LBOYdbhh7cuj-VKKY"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
 }
 
 <div class="row">
@@ -25,22 +27,22 @@
     </div>
 
     <div class="col-sm-4">
-        <form data-bind="submit: register">
+        <form id="registerForm" data-bind="submit: register">
             <h3>Register</h3>
             <div class="form-group">
                 <label>Email</label>
-                <input class="form-control" type="text" data-bind="value: registerEmail" />
+                <input class="form-control" type="text" data-bind="value: registerEmail" name="registerEmail" />
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input class="form-control" type="password" data-bind="value: registerPassword" />
+                <input class="form-control" type="password" data-bind="value: registerPassword" name="registerPassword" />
             </div>
             <div class="form-group">
                 <label>Confirm Password</label>
-                <input class="form-control" type="password" data-bind="value: registerPassword2" />
+                <input class="form-control" type="password" data-bind="value: registerPassword2" name="registerPassword2" />
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-default">Register</button>
+                <button type="submit" class="btn btn-default" data-bind="html: registerButton, enable: isRegisterLoading">Register</button>
             </div>
         </form>
     </div>
