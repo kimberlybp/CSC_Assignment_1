@@ -17,6 +17,12 @@
     self.registerButton = ko.observable('Register');
     self.isRegisterLoading = ko.observable(true);
 
+    self.loginButton = ko.observable('Log In');
+    self.isLoginLoading = ko.observable(true);
+
+    self.logoutButton = ko.observable('Log Out');
+    self.isLogoutLoading = ko.observable(true);
+
     function showError(jqXHR) {
 
         self.result(jqXHR.status + ': ' + jqXHR.statusText);
@@ -144,24 +150,67 @@
         self.result('');
         self.errors.removeAll();
 
-        var loginData = {
-            grant_type: 'password',
-            username: self.loginEmail(),
-            password: self.loginPassword()
-        };
+        //Validate form before submitting
+        $('#loginForm').validate({
+            rules: {
+                loginEmail: {
+                    required: true,
+                    email: true
+                },
+                loginPassword: {
+                    required: true
+                }
+            },
+            messages: {
+                loginEmail: {
+                    required: "Please enter an Email Address",
+                    email: "Please enter a valid Email Address"
+                },
+                loginPassword: {
+                    required: "Please enter a Password"
+                }
+            }
+        })
 
-        $.ajax({
-            type: 'POST',
-            url: '/Token',
-            data: loginData
-        }).done(function (data) {
-            self.user(data.userName);
-            // Cache the access token in session storage.
-            sessionStorage.setItem(tokenKey, data.access_token);
-        }).fail(showError);
+        if ($('#loginForm').valid()) {
+
+            //Disable and turn Log In button to loading with spinner 
+            self.isLoginLoading(false);
+            self.loginButton('<i class="fa fa-refresh fa-spin"></i>Loading');
+
+            var loginData = {
+                grant_type: 'password',
+                username: self.loginEmail(),
+                password: self.loginPassword()
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/Token',
+                data: loginData
+            }).done(function (data) {
+                self.user(data.userName);
+                self.result(data.userName + ' sucessfully logged in.');
+                // Cache the access token in session storage.
+                sessionStorage.setItem(tokenKey, data.access_token);
+                self.isLoginLoading(true);
+                self.loginButton('Log In');
+            }).fail(function (err) {
+                showError(err);
+                self.isLoginLoading(true);
+                self.loginButton('Log In');
+            });
+        }
     }
 
     self.logout = function () {
+        self.result('');
+        self.errors.removeAll();
+
+        //Disable and turn Log In button to loading with spinner 
+        self.isLogoutLoading(false);
+        self.logoutButton('<i class="fa fa-refresh fa-spin"></i>Loading');
+
         // Log out from the cookie based logon.
         var token = sessionStorage.getItem(tokenKey);
         var headers = {};
@@ -177,7 +226,13 @@
             // Successfully logged out. Delete the token.
             self.user('');
             sessionStorage.removeItem(tokenKey);
-        }).fail(showError);
+            self.isLogoutLoading(true);
+            self.logoutButton('Log Out');
+        }).fail(function (err) {
+            showError(err);
+            self.isLogoutLoading(true);
+            self.logoutButton('Log Out');
+        });
     }
 
     function addValidationMethods() {
