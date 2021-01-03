@@ -207,6 +207,19 @@
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="searchTalentStart\images\Barot_Bellingham_tn.jpg" />
+    <Content Include="searchTalentStart\images\Constance_Smith_tn.jpg" />
+    <Content Include="searchTalentStart\images\Hassum_Harrod_tn.jpg" />
+    <Content Include="searchTalentStart\images\Hillary_Goldwynn_tn.jpg" />
+    <Content Include="searchTalentStart\images\Jennifer_Jerome_tn.jpg" />
+    <Content Include="searchTalentStart\images\Jonathan_Ferrar_tn.jpg" />
+    <Content Include="searchTalentStart\images\LaVonne_LaRue_tn.jpg" />
+    <Content Include="searchTalentStart\images\Riley_Rewington_tn.jpg" />
+    <Content Include="searchTalentStart\images\Xhou_Ta_tn.jpg" />
+    <Content Include="searchTalentStart\index.html" />
+    <Content Include="searchTalentStart\jquery.js" />
+    <Content Include="searchTalentStart\mystyle.css" />
+    <Content Include="searchTalentStart\script.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -221,6 +234,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="searchTalentStart\data.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
