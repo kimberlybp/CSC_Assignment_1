@@ -8,6 +8,11 @@ namespace Task5
         // For more information on bundling, visit https://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
+            bundles.Add(new ScriptBundle("~/bundles/app")
+                .Include("~/Scripts/app.js")
+                .Include("~/Scripts/Datatables/jquery.dataTables.min.js")
+                .Include("~/Scripts/Datatables/dataTables.select.min.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js"));
 
@@ -24,7 +29,10 @@ namespace Task5
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css").Include(
+                      "~/Content/DataTables/css/jquery.dataTables.min.css",
+                      "~/Content/DataTables/css/select.dataTables.min.css",
+                      "~/Content/font-awesome.min.css"));
         }
     }
 }
