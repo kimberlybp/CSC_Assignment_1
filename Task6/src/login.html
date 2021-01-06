@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>CSC Task 6</title>
+    <meta name="description" content="A demo of Stripe Payment Intents" />
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/global.css" />
+
+    <script src="./login-script.js" defer></script>
+  </head>
+
+  <body>
+    <div id="loading-overlay">
+      <div class="loader"></div>
+      <div class="loader-text">Loading..</div>
+    </div>
+    <div class="togethere-background"></div>
+    <div class="sr-root">
+      <div class="sr-main">
+        <header class="sr-header">
+          <div class="sr-header__logo"></div>
+        </header>
+        <h1>Login</h1>
+        <form id="form">
+          <div class="container">
+            <label for="email"><b>Email</b></label>
+            <input id="email" type="email" placeholder="Enter Email" name="email" required>
+        
+            <label for="psw"><b>Password</b></label>
+            <input id="password" type="password" placeholder="Enter Password" name="psw" required>
+        
+            <button style="width: 100%" id="login" type="submit">Login</button>
+          </div>
+        </form>
+        <form id="guest-form">
+        <button type="submit">Continue as Guest</button>
+        </form>
+      </div>
+    </div>
+    <div id="error-message" class="error-message"></div>
+  </body>
+</html>
