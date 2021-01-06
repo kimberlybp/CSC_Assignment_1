@@ -14,15 +14,24 @@
   </head>
 
   <body>
+    <div id="loading-overlay">
+      <div class="loader"></div>
+      <div class="loader-text">Loading..</div>
+    </div>
     <div class="togethere-background"></div>
     <div class="sr-root">
       <div class="sr-main">
         <header class="sr-header">
           <div class="sr-header__logo"></div>
+          <div id="welcome"></div>
         </header>
+        <form id="manage-billing-form">
+          <button id="manage">Manage Billing</button>
+        </form>
+        <button id="logout" style="width:20%">Log Out</button>
         <h1>Choose a subscription plan</h1>
 
-        <div class="price-table-container">
+        <div class="price-table-container" style="margin-bottom: 100px">
           <section>
             <img
               src="/img/starter.png"

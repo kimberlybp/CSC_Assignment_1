@@ -1,3 +1,4 @@
+document.getElementById("loading-overlay").style.display = "block";
 // If a fetch error occurs, log it to the console and show it in the UI.
 var handleFetchResult = function(result) {
   if (!result.ok) {
@@ -14,14 +15,15 @@ var handleFetchResult = function(result) {
 };
 
 // Create a Checkout Session with the selected plan ID
-var createCheckoutSession = function(priceId) {
+var createCheckoutSession = function(priceId, customerId) {
   return fetch("/create-checkout-session", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      priceId: priceId
+      priceId: priceId,
+      customerId: customerId
     })
   }).then(handleFetchResult);
 };
@@ -47,13 +49,16 @@ fetch("/setup")
     var starterPriceId = json.starterPrice;
     var basicPriceId = json.basicPrice;
     var premiumPriceId = json.premiumPrice;
+    var customerId = json.customer_id;
+    var customerEmail = json.customer_email;
 
     var stripe = Stripe(publishableKey);
     // Setup event handler to create a Checkout Session when button is clicked
     document
       .getElementById("starter-plan-btn")
       .addEventListener("click", function(evt) {
-        createCheckoutSession(starterPriceId).then(function(data) {
+        document.getElementById("loading-overlay").style.display = "block";
+        createCheckoutSession(starterPriceId, customerId).then(function(data) {
           // Call Stripe.js method to redirect to the new Checkout page
           stripe
             .redirectToCheckout({
@@ -67,7 +72,8 @@ fetch("/setup")
     document
       .getElementById("basic-plan-btn")
       .addEventListener("click", function(evt) {
-        createCheckoutSession(basicPriceId).then(function(data) {
+        document.getElementById("loading-overlay").style.display = "block";
+        createCheckoutSession(basicPriceId, customerId).then(function(data) {
           // Call Stripe.js method to redirect to the new Checkout page
           stripe
             .redirectToCheckout({
@@ -81,7 +87,8 @@ fetch("/setup")
     document
       .getElementById("premium-plan-btn")
       .addEventListener("click", function(evt) {
-        createCheckoutSession(premiumPriceId).then(function(data) {
+        document.getElementById("loading-overlay").style.display = "block";
+        createCheckoutSession(premiumPriceId, customerId).then(function(data) {
           // Call Stripe.js method to redirect to the new Checkout page
           stripe
             .redirectToCheckout({
@@ -90,4 +97,67 @@ fetch("/setup")
             .then(handleResult);
         });
       });
+
+    if (customerEmail) {
+      document
+        .getElementById('welcome')
+        .innerHTML = 'Welcome ' + customerEmail + '!';
+    }else{
+      document
+        .getElementById('welcome')
+        .innerHTML = 'Welcome guest user!';
+      document
+        .getElementById('logout')
+        .innerHTML = 'Back to Login';
+    }
+    
+
+    document
+      .getElementById('logout')
+      .addEventListener("click", function (evt) {
+        document.getElementById("loading-overlay").style.display = "block";
+        fetch('/logOut', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        .then(handleFetchResult)
+        .then((data) => {
+          customerEmail ? 
+          window.location.href = data.url + "?LogOutSuccess=true"
+          :
+          window.location.href = data.url
+        });
+      });
+
+      const manageBillingForm = document.querySelector('#manage-billing-form');
+      manageBillingForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        document.getElementById("loading-overlay").style.display = "block";
+        fetch('/customer-portal-byId', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            customerId: customerId
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            window.location.href = data.url;
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+      });
+
+      if(customerId == null){
+        document.getElementById('manage').disabled = true;
+      }
+
+      document.getElementById("loading-overlay").style.display = "none";
   });
+
+ 
