@@ -4,7 +4,6 @@ const path = require('path');
 const app = express();
 const bodyParser = require('body-parser');
 const firebase = require('firebase');
-const { Console } = require('console');
 
 const envFilePath = path.resolve(__dirname, './.env');
 const env = require("dotenv").config({ path: envFilePath });
