@@ -1,51 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>CSC Task 7</title>
-    <meta name="description" content="A demo of receipt recognition" />
 
-    <link rel="icon" href="./img/ai.png" type="image/png" />
-    <link rel="stylesheet" href="css/normalize.css" />
-    <link rel="stylesheet" href="css/global.css" />
+<head>
+  <meta charset="utf-8" />
+  <title>CSC Task 7</title>
+  <meta name="description" content="A demo of receipt recognition" />
 
-    <script src="./script.js" defer></script>
-  </head>
+  <link rel="icon" href="./img/ai.png" type="image/png" />
+  <link rel="stylesheet" href="css/normalize.css" />
+  <link rel="stylesheet" href="css/global.css" />
 
-  <body>
-    <div id="loading-overlay">
-      <div id="loader"></div>
-      <div id="loader-text">Loading..</div>
-    </div>
-    <div class="background"></div>
-    <div class="root">
-      <div class="main" style="margin-bottom: 100px;">
-        <header class="header">
-          <div class="header__logo"></div>
-        </header>
-        <h1>Is your image a receipt?</h1>
-        <h2>Upload an image to find out if it is a receipt!</h2>
-        <div class="container" style="margin-bottom: 10px; width: 650px;">
-          <section>
-            <input type="file" id="choose-file-button" hidden/>
-            <label for="choose-file-button">Choose File</label>
-            <span id="file-chosen-text">No file chosen</span>
-            <div id="image-overlay">
-              Preview of Image
-            </div>
-            <img id="preview-img"/>
-            <button id="removeFile">Remove File</button>
-          </section>
-          <section id="results-section">
-            <h2>Results:</h2>
-            <div id="results-container"></div>
-          </section>
+  <script src="./script.js" defer></script>
+</head>
 
-        </div>
-        <button id="predict">Upload and Predict</button>
-        <button id="totalAmt">Find Total Amount</button>
+<body>
+  <div id="loading-overlay">
+    <div id="loader"></div>
+    <div id="loader-text">Loading..</div>
+  </div>
+  <div class="background"></div>
+  <div class="root">
+    <div class="main" style="margin-bottom: 100px;">
+      <header class="header">
+        <div class="header__logo"></div>
+      </header>
+      <h1>Is your image a receipt?</h1>
+      <h2>Upload an image to find out if it is a receipt!</h2>
+      <div class="container" style="margin-bottom: 10px; width: 650px;">
+        <section>
+          <input type="file" id="choose-file-button" hidden />
+          <label for="choose-file-button">Choose File</label>
+          <span id="file-chosen-text">No file chosen</span>
+          <div id="image-overlay">
+            Preview of Image
+          </div>
+          <img id="preview-img" />
+          <button id="removeFile">Remove File</button>
+        </section>
+        <section id="results-section">
+          <h2>Results:</h2>
+          <div id="results-container"></div>
+        </section>
+
       </div>
+      <button id="predict">Upload and Predict</button>
+      <button id="totalAmt">Find Total Amount</button>
     </div>
-    <div id="message-container" class="message-container"></div>
-  </body>
+  </div>
+  <div id="message-container" class="message-container"></div>
+</body>
+
 </html>
