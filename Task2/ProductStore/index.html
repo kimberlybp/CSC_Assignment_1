@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Product App</title>
+</head>
+<body>
+
+    <div>
+        <h2>Product List</h2>
+        <div>
+            <img id="loading-image" src="loading.gif" alt="Loading..." hidden />
+        </div>
+        <ul id="products" />
+    </div>
+    <div>
+        <h2>Search by ID</h2>
+        <input type="text" placeholder="Enter Product Id" id="prodId" size="12" autocomplete="off" />
+        <input type="button" value="Search" onclick="find();" />
+        <p id="product" />
+    </div>
+    <div>
+        <h2>Search by Category</h2>
+        <input type="text" placeholder="Enter Product Category" id="prodcat" size="20" autocomplete="off" />
+        <input type="button" value="Search" onclick="findcat();" />
+        <p id="product2" />
+    </div>
+    <div>
+        <h2>Add New Product</h2>
+            <div class="form-group">
+                <!--<label for="inputName" class="col-sm-2 control-label">Product Name</label>-->
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputName" autocomplete="off" placeholder="Product Name"/>
+                    <p id="msg1" />
+                </div>
+                <br />
+                <!--<label for="inputCategory" class="col-sm-2 control-label">Product Category</label>-->
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputCategory" autocomplete="off" placeholder="Product Category"/>
+                    <p id="msg2" />
+                </div>
+                <br />
+                <!--<label for="inputPrice" class="col-sm-2 control-label">Price</label>-->
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputPrice" autocomplete="off" placeholder="Price"/>
+                    <p id="msg3" />
+                </div>
+                <br />
+            </div>
+            <!--<input type="submit" value="Add Product" onclick="addnew();" />-->
+            <input type="submit" id="addsubmit" value="Add Product" />
+        <p id="product2" />
+    </div>
+    <div>
+        <h2>Update Product</h2>
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="updateId" autocomplete="off" placeholder="Enter Product Id" />
+                    <!--<input type="button" value="Get Product Details" onclick="getupdate();" />-->
+                </div>
+                <br />
+                <!--<label for="updateName" class="col-sm-2 control-label">Product Name</label>-->
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="updateName" autocomplete="off" placeholder="Product Name" />
+                    <!--<p contenteditable="true" id="updateName" style="border: solid 1px black; border-radius: 3px; padding: 6px" />-->
+                </div>
+                <br />
+                <!--<label for="updateCategory" class="col-sm-2 control-label">Product Category</label>-->
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="updateCategory" autocomplete="off" placeholder="Product Category" />
+                    <!--<p contenteditable="true" id="updateCategory" style="border: solid 1px black; border-radius: 3px; padding: 6px" />-->
+                </div>
+                <br />
+                <!--<label for="updatePrice" class="col-sm-2 control-label">Price</label>-->
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="updatePrice" autocomplete="off" placeholder="Price" />
+                    <!--<p contenteditable="true" id="updatePrice" style="border: solid 1px black; border-radius: 3px; padding: 6px" />-->
+                </div>
+                <br />
+                <input type="submit" id="updatesubmit" value="Update Product" />
+            </div>
+    </div>
+    <div>
+        <h2>Delete Product</h2>
+        <form id="deleteproductform">
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="deleteId" autocomplete="off" placeholder="Enter Product Id" />
+                    <!--<input type="button" value="Get Product" onclick="getdelete();" />-->
+                    <p id="product4" />
+                </div>
+                <br />
+                <input type="submit" id="deletesubmit" value="Delete Product" />
+            </div>
+        </form>
+    </div>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script>
+        var uri = 'api/v2/products';
+
+
+        $(document).ready(function () {
+            $('#loading-image').show();
+            //Send an AJAX request
+            $.getJSON(uri)
+                .done(function (data) {
+                    $('#loading-image').hide();
+                    // On success, 'data' contains a list of products.
+                    $.each(data, function (key, item) {
+                        // Add a list item for the product.
+                        $('<li>', { text: formatItem(item) }).appendTo($('#products'));
+                    });
+                });
+        });
+
+        function formatItem(item) {
+            return item.Name + ' (' + item.Category + ') ' + ': $' + item.Price;
+        }
+
+        function find() {
+            var id = $('#prodId').val();
+            if (id.length == 0) {
+                $('#product').text("Error: Please enter a product ID.");
+            } else {
+                $.getJSON(uri + '/' + id)
+                    .done(function (data) {
+                        $('#product').text(formatItem(data));
+                    })
+                    .fail(function () {
+                        $('#product').text('Error: Item not found.');
+                    });
+            }
+        }
+
+        function findcat() {
+            var category = $('#prodcat').val();
+            if (category.length == 0) {
+                $('#product2').text("Error: Please enter a product category.");
+            } else {
+                $.getJSON(uri + '/' + category)
+                    .done(function (data) {
+                        $('#product2').text("");
+                        $.each(data, function (key, item) {
+                            // Add a list item for the product.
+                            $('<li>', { text: formatItem(item) }).appendTo($('#product2'));
+                        });
+                    })
+                    .fail(function () {
+                        $('#product2').text('Error: Item not found.');
+                    });
+            }
+        }
+
+        function getupdate() {
+            var id = $('#updateId').val();
+            $.getJSON(uri + '/' + id)
+                .done(function (data) {
+                    $('#updateName').text(formatItemName(data));
+                    $('#updateCategory').text(formatItemCat(data));
+                    $('#updatePrice').text(formatItemPrice(data));
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#product3').text('Data not found.');
+                });
+        }
+
+        $('#updatesubmit').click(function () {
+            var id = $('#updateId').val();
+            var newname = $('#updateName').val();
+            var newcat = $('#updateCategory').val();
+            var newprice = $('#updatePrice').val();
+
+            var formdata = {
+                "Name": newname,
+                "Category": newcat,
+                "Price": newprice
+            }
+
+            $.ajax({
+                method: 'PUT',
+                url: uri + '/' + id,
+                data: formdata, 
+                success: function () {
+                    alert("Item updated successfully.");
+                    document.location.reload();
+                },
+                fail: function () {
+                    alert("Item unable to be updated.");
+                }
+            });
+        });
+
+        //function getdelete() {
+        //    var id = $('#deleteId').val();
+        //    $.getJSON(uri + '/' + id)
+        //        .done(function (data) {
+        //            $('#product4').text("Are you sure you want to delete this item: " + formatItemName(data) + "?");
+        //        })
+        //        .fail(function (jqXHR, textStatus, err) {
+        //            $('#product4').text('Error: Item not found.');
+        //        });
+        //}
+
+        $('#deletesubmit').click(function () {
+            var id = $('#deleteId').val();
+
+            $.ajax({
+                method: 'DELETE',
+                url: uri + '/' + id,
+                processData: false,
+                success: function () {
+                    alert("Item deleted successfully.");
+                }
+            });
+        });
+
+        $('#addsubmit').click(function () {
+            var prodname = $('#inputName').val();
+            var prodcat = $('#inputCategory').val();
+            var prodprice = $('#inputPrice').val();
+
+            if (prodname.length == 0) {
+                $('#msg1').text("Error: Please enter a product name.");
+                $('#msg2').text("");
+                $('#msg3').text("");
+            } else if (prodcat.length == 0) {
+                $('#msg2').text("Error: Please enter a product category.");
+                $('#msg1').text("");
+                $('#msg3').text("");
+            } else if (prodprice.length == 0) {
+                $('#msg3').text("Error: Please enter a product price.");
+                $('#msg2').text("");
+                $('#msg1').text("");
+            } else {
+                var formdata = {
+                    "Name": prodname,
+                    "Category": prodcat,
+                    "Price": prodprice
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: uri,
+                    data: formdata,
+                    success: function () {
+                        alert("Item added successfully.");
+                        document.location.reload();
+                    },
+                    fail: function () {
+                        alert("Item unable to be added.");
+                    }
+                });
+            }
+        });
+    </script>
+    <style>
+        body {
+            font-family: 'Lato';
+            margin: 20px;
+        }
+
+        #updateName, #updateCategory, #updatePrice {
+            width: 15%;
+        }
+    </style>
+</body>
+</html>
