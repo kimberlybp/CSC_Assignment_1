@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div>
+        <h2>Get Weather Details</h2>
+        <input type="text" placeholder="Enter Location" id="inputLocation" size="12" autocomplete="off" />
+        <p id="locerror" />
+        <p />
+        <input type="number" placeholder="Enter No. of Days" id="inputDays" size="12" autocomplete="off" />
+        <p id="numerror" />
+        <p />
+        <input type="submit" value="Get Weather Details" id="btnSubmit" />
+    </div>
+    <div>
+        <span id="weatherdetails" />
+    </div>
+    <div>
+        <img id="loading-image" src="loading.gif" alt="Loading..." hidden />
+    </div>
+
+    <script src="Scripts/jquery-3.5.1.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('#btnSubmit').click(function () {
+
+                $('#loading-image').show();
+
+                var loc = $('#inputLocation').val();
+                var days = $('#inputDays').val();
+                var key = 'ac88aed80b464598b2a51406201611';
+                var url = 'https://api.worldweatheronline.com/premium/v1/weather.ashx';
+
+                if (loc.length == 0) {
+                    $('#locerror').text("Error! City name is required.");
+                    $('#weatherdetails').text("");
+                    $('#loading-image').hide();
+                } else if (days.length == 0) {
+                    $('#numerror').text("Error! Number of days is required.");
+                    $('#weatherdetails').text("");
+                    $('#loading-image').hide();
+                } else if (days <= 0) {
+                    $('#numerror').text("Error! Please enter a number above 0.");
+                    $('#weatherdetails').text("");
+                    $('#loading-image').hide();
+                } else {
+
+                    $('#locerror').text("");
+                    $('#numerror').text("");
+                    $('#weatherdetails').text("");
+
+                    var formdata = {
+                        "q": loc,
+                        "num_of_days": days,
+                        "format": 'json',
+                        "key": key
+                    };
+
+                    $.ajax({
+                        type: 'GET',
+                        url: url,
+                        data: formdata,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: 'json',
+                        success: function (response) {
+                            console.log(response);
+                            var details = JSON.stringify(response);
+                            $('#weatherdetails').append(details);
+                            $('#loading-image').hide();
+                        },
+                    });
+                }
+            });
+        })
+    </script>
+    <style>
+        body {
+            font-family: 'Lato';
+        }
+
+        #loading-image {
+            position: absolute;
+            top: 100px;
+            left: 200px;
+            z-index: 100;
+        }
+    </style>
+</body>
+</html>
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
