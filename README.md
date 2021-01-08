@@ -1,7 +1,13 @@
 # CSC Assignment 1
 Done by:
+
 Kimberly Barcelon Pontanares - 1829361
+
 Javier Poh Jun Hao - 1816626
+
+Class:
+
+DIT/FT/3A/22
 
 Note: Documents such as Sequence Diagrams and Web API Documentation can be found in each Task file with the source code. 
 
