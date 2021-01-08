@@ -1,6 +1,6 @@
 $('#search').keyup(function () {
     //get data from json file
-    var urlForJson = "data.json";
+    var urlForJson = "/api/talents";
 
 
     //get data from Restful web Service in development environment
@@ -21,7 +21,7 @@ $('#search').keyup(function () {
             //for debug
             console.log(data);
             if ((val.Name.search(myExp) != -1) ||
-			(val.Bio.search(myExp) != -1)) {
+                (val.Bio.search(myExp) != -1)) {
                 output += '<li>';
                 output += '<h2>' + val.Name + '</h2>';
                 //get the absolute path for local image
@@ -36,4 +36,8 @@ $('#search').keyup(function () {
         output += '</ul>';
         $('#update').html(output);
     }); //get JSON
+
+
+
+
 });
