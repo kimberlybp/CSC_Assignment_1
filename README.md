@@ -13,6 +13,10 @@ Note: Report/Documents for each task such as Sequence Diagrams and Web API Docum
 
 It can also be found in Documents folder. [Link to Documents](https://github.com/kimberlybp/CSC_Assignment_1/tree/master/Documents)
 
+## Task 6 Login credentials
+Email: janesmith@example.com
+Password: password
+
 For Tasks 6 & 7 done in node.js please remember to run 
 `npm install` and to use .env.example as a template to add a .env file.
 
