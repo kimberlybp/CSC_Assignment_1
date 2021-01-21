@@ -9,7 +9,7 @@ Class:
 
 DIT/FT/3A/22
 
-Note: Documents such as Sequence Diagrams and Web API Documentation can be found in each Task file with the source code. 
+Note: Report/Documents for each task such as Sequence Diagrams and Web API Documentation can be found in each Task file with the source code. 
 
 It can also be found in Documents folder. [Link to Documents](https://github.com/kimberlybp/CSC_Assignment_1/tree/master/Documents)
 
